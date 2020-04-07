@@ -1,0 +1,145 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Hello World App
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /hello:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hello_world
+    get:
+      description: Returns 'Hello Usser' to the caller
+      # used as the method name of the controller
+      operationId: hello
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /books:
+    x-swagger-router-controller: books
+    get:
+      description: Returns a list of all books
+      operationId: books
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Books"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      description: Add a new book to the list
+      operationId: save
+      parameters:
+        - name: book
+          description: Book properties
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Book"
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: "#/definitions/Response"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /books/{id}:
+    x-swagger-router-controller: books
+    get:
+      description: Get a book
+      operationId: find
+      parameters:
+        - name: id
+          description: Book id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Book"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+  
+# complex objects have schema definitions
+definitions:
+  HelloWorldResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  Book:
+    properties:
+      id:
+        type: string
+        description: Unique identifier representing a book
+      title:
+        type: string
+        description: Title of the book
+      author:
+        type: string
+        description: Author of the book
+      pages:
+        type: number
+        description: Number of pages of the book
+      year:
+        type: number
+        description: Year the book was released
+  Books:
+    type: array
+    items:
+      $ref: '#/definitions/Book'
+  Response:
+    type: object
+    properties:
+      success:
+        type: number
+      description:
+        type: string
+    required:
+      - success
+      - description
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
