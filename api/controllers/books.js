@@ -20,6 +20,16 @@ BOOKS.set(
   }
 );
 BOOKS.set(
+  '9222222',
+  {
+    id: '7',
+    title: 'Harry Potter',
+    author: 'Rowling',
+    pages: 862,
+    year: 2001
+  }
+);
+BOOKS.set(
   '9780321356680',
   {
     id: '9780321356680',
